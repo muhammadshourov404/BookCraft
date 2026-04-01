@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>BookCraft – আপনার বই তৈরি করুন</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- =================== DASHBOARD VIEW =================== -->
+<div id="view-dashboard" class="view active">
+  <div class="dash-header">
+    <div class="dash-logo">
+      <div class="logo-mark">✦</div>
+      <div>
+        <h1 class="logo-title">BookCraft</h1>
+        <p class="logo-sub">আপনার বই, আপনার ভাষায়</p>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-new-book">+ নতুন বই</button>
+  </div>
+
+  <div class="books-grid" id="books-grid"></div>
+
+  <div class="empty-state" id="empty-state" style="display:none">
+    <div class="empty-icon">✍</div>
+    <h2>আপনার প্রথম বই তৈরি করুন</h2>
+    <p>লেখা পেস্ট করুন, সাজিয়ে নিন, PDF ডাউনলোড করুন — সম্পূর্ণ বিনামূল্যে।</p>
+    <button class="btn-primary" onclick="showNewBookModal()">+ নতুন বই শুরু করুন</button>
+  </div>
+</div>
+
+<!-- =================== EDITOR VIEW =================== -->
+<div id="view-editor" class="view">
+  <nav class="editor-nav">
+    <button class="btn-back" id="btn-back" title="ড্যাশবোর্ড">← ফিরে যান</button>
+    <div class="nav-center">
+      <input type="text" id="input-book-title" placeholder="বইয়ের শিরোনাম..." class="nav-title-input">
+    </div>
+    <div class="nav-actions">
+      <button class="btn-outline" id="btn-preview">👁 প্রিভিউ</button>
+      <button class="btn-outline" id="btn-save">💾 সেভ</button>
+      <button class="btn-primary" id="btn-export-pdf">📥 PDF</button>
+    </div>
+  </nav>
+
+  <div class="editor-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="editor-sidebar" id="editor-sidebar">
+      <button class="sidebar-toggle-mobile" id="sidebar-toggle">☰ মেনু</button>
+      <div class="sidebar-inner" id="sidebar-inner">
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">বইয়ের তথ্য</div>
+          <input type="text" id="input-author" placeholder="লেখকের নাম" class="side-input">
+          <input type="text" id="input-subtitle" placeholder="উপশিরোনাম (ঐচ্ছিক)" class="side-input">
+          <select id="input-genre" class="side-input">
+            <option value="">ধরন বেছে নিন</option>
+            <option value="উপন্যাস">উপন্যাস</option>
+            <option value="ছোটগল্প">ছোটগল্প</option>
+            <option value="কবিতাসংকলন">কবিতাসংকলন</option>
+            <option value="আত্মজীবনী">আত্মজীবনী</option>
+            <option value="প্রবন্ধ">প্রবন্ধ</option>
+            <option value="অন্যান্য">অন্যান্য</option>
+          </select>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title-row">
+            <span class="sidebar-section-title">অধ্যায়সমূহ</span>
+            <button class="btn-add-ch" id="btn-add-chapter" title="নতুন অধ্যায়">+</button>
+          </div>
+          <div id="chapters-list" class="chapters-list"></div>
+        </div>
+
+        <div class="sidebar-section stats-section">
+          <div class="stat-row">
+            <span class="stat-label">মোট শব্দ</span>
+            <span class="stat-val" id="total-words">০</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">অধ্যায়</span>
+            <span class="stat-val" id="total-chapters">০</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">আনু. পৃষ্ঠা</span>
+            <span class="stat-val" id="total-pages">০</span>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- MAIN EDITOR -->
+    <main class="editor-main">
+
+      <!-- Toolbar -->
+      <div class="format-toolbar" id="format-toolbar">
+        <button class="fmt-btn" data-cmd="bold"><b>B</b></button>
+        <button class="fmt-btn" data-cmd="italic"><i>I</i></button>
+        <button class="fmt-btn" data-cmd="underline"><u>U</u></button>
+        <div class="fmt-sep"></div>
+        <button class="fmt-btn" data-cmd="h2" title="বড় শিরোনাম">শি১</button>
+        <button class="fmt-btn" data-cmd="h3" title="ছোট শিরোনাম">শি২</button>
+        <button class="fmt-btn" data-cmd="p" title="সাধারণ অনুচ্ছেদ">¶</button>
+        <div class="fmt-sep"></div>
+        <button class="fmt-btn" data-cmd="justifyLeft" title="বামে">⇤</button>
+        <button class="fmt-btn" data-cmd="justifyCenter" title="মাঝে">≡</button>
+        <button class="fmt-btn" data-cmd="justifyRight" title="ডানে">⇥</button>
+        <div class="fmt-sep"></div>
+        <button class="fmt-btn" data-cmd="insertUnorderedList" title="তালিকা">•≡</button>
+        <button class="fmt-btn" data-cmd="indent" title="ইন্ডেন্ট">→</button>
+        <button class="fmt-btn" data-cmd="outdent" title="আউটডেন্ট">←</button>
+        <div class="fmt-sep fmt-sep-right"></div>
+        <select id="font-size-sel" class="fmt-select" title="ফন্ট সাইজ">
+          <option value="13">13px</option>
+          <option value="15" selected>15px</option>
+          <option value="17">17px</option>
+          <option value="19">19px</option>
+          <option value="22">22px</option>
+        </select>
+      </div>
+
+      <!-- Chapter area -->
+      <div class="chapter-editor-wrap" id="chapter-editor-wrap" style="display:none">
+        <input type="text" id="input-chapter-title" placeholder="অধ্যায়ের শিরোনাম..." class="ch-title-input">
+        <div
+          id="editor-content"
+          class="editor-content"
+          contenteditable="true"
+          spellcheck="false"
+          data-placeholder="এখানে লিখুন অথবা আপনার লেখা পেস্ট করুন..."></div>
+        <div class="editor-footer">
+          <span id="ch-word-count">০ শব্দ</span>
+          <span id="autosave-label" class="autosave-label">●  সেভ হয়নি</span>
+        </div>
+      </div>
+
+      <!-- No chapter selected -->
+      <div class="no-chapter-msg" id="no-chapter-msg">
+        <div class="nc-icon">📖</div>
+        <p>বাম দিক থেকে একটি অধ্যায় বেছে নিন<br>অথবা নতুন অধ্যায় যোগ করুন।</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- =================== PREVIEW MODAL =================== -->
+<div id="preview-modal" class="modal-backdrop" style="display:none">
+  <div class="modal-box modal-large">
+    <div class="modal-head">
+      <h2>বইয়ের প্রিভিউ</h2>
+      <div class="modal-head-actions">
+        <button class="btn-primary" id="btn-print-pdf">🖨 Print / PDF</button>
+        <button class="btn-icon-close" id="btn-close-preview">✕</button>
+      </div>
+    </div>
+    <div class="book-preview-scroll">
+      <div id="book-preview-content" class="book-preview-root"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== NEW BOOK MODAL =================== -->
+<div id="new-book-modal" class="modal-backdrop" style="display:none">
+  <div class="modal-box modal-small">
+    <div class="modal-head">
+      <h2>নতুন বই তৈরি করুন</h2>
+      <button class="btn-icon-close" id="btn-close-new-book">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label">বইয়ের শিরোনাম <span class="req">*</span></label>
+      <input type="text" id="new-title" placeholder="যেমন: একটি নদীর গল্প" class="modal-input" maxlength="100">
+      <label class="modal-label">লেখকের নাম <span class="req">*</span></label>
+      <input type="text" id="new-author" placeholder="আপনার নাম" class="modal-input" maxlength="80">
+      <label class="modal-label">উপশিরোনাম</label>
+      <input type="text" id="new-subtitle" placeholder="ঐচ্ছিক" class="modal-input" maxlength="150">
+      <label class="modal-label">ধরন</label>
+      <select id="new-genre" class="modal-input">
+        <option value="">বেছে নিন</option>
+        <option value="উপন্যাস">উপন্যাস</option>
+        <option value="ছোটগল্প">ছোটগল্প</option>
+        <option value="কবিতাসংকলন">কবিতাসংকলন</option>
+        <option value="আত্মজীবনী">আত্মজীবনী</option>
+        <option value="প্রবন্ধ">প্রবন্ধ</option>
+        <option value="অন্যান্য">অন্যান্য</option>
+      </select>
+      <button class="btn-primary btn-full" id="btn-create-book">বই তৈরি করুন →</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== DELETE CONFIRM MODAL =================== -->
+<div id="delete-modal" class="modal-backdrop" style="display:none">
+  <div class="modal-box modal-small">
+    <div class="modal-head">
+      <h2>বই মুছে ফেলুন?</h2>
+      <button class="btn-icon-close" id="btn-close-delete">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="delete-warn">এই বইটি স্থায়ীভাবে মুছে যাবে। এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।</p>
+      <div class="delete-actions">
+        <button class="btn-outline" id="btn-cancel-delete">বাতিল</button>
+        <button class="btn-danger" id="btn-confirm-delete">হ্যাঁ, মুছে ফেলুন</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<!-- Firebase SDK (compat v9) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<!-- html2pdf for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
